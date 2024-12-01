@@ -53,7 +53,7 @@ menu = {
 # 1. Set up order list. Order list will store a list of dictionaries for
 # menu item name, item price, and quantity ordered
 
-
+order_list = []
 # Launch the store and present a greeting to the customer
 print("Welcome to the variety food truck.")
 
@@ -118,32 +118,48 @@ while place_order:
                     }
                     i += 1
             # 2. Ask customer to input menu item number
-
+            item_number_input = input("Type the item number you wish to order: ")
 
             # 3. Check if the customer typed a number
-
+            if item_number_input.isdigit():
+    
                 # Convert the menu selection to an integer
-
+                item_number = int(item_number_input)
+                #print("Available item numbers:", item_number.keys())
 
                 # 4. Check if the menu selection is in the menu items
+                if item_number in menu_items:
+                    selected_item = menu_items[item_number]
 
                     # Store the item name as a variable
-
+                    item_name = selected_item["Item name"]
 
                     # Ask the customer for the quantity of the menu item
-
+                    quantity_input = input(f'How many {selected_item["Item name"]}s would like to order? ')
 
                     # Check if the quantity is a number, default to 1 if not
-
+                    if quantity_input.isdigit():
+                        quantity = int(quantity_input)
+                    else:
+                        quantity = 1
+                        print("Invalid quanity entered. Defaulting to 1.")
 
                     # Add the item name, price, and quantity to the order list
-
+                    order_list.append({
+                        "Item name": selected_item["Item name"],
+                        "Price": selected_item["Price"],
+                        "Quantity": quantity
+                    })
 
                     # Tell the customer that their input isn't valid
-
+                    #if item_number not in menu_items:
+                else:
+                    print(f"{item_number} was not a valid menu option.")
 
                 # Tell the customer they didn't select a menu option
-
+                #if menu_category not in menu_items.values():
+            else:
+                print(f"{menu_category} was not a menu option")
         else:
             # Tell the customer they didn't select a menu option
             print(f"{menu_category} was not a menu option.")
@@ -154,47 +170,60 @@ while place_order:
     while True:
         # Ask the customer if they would like to order anything else
         keep_ordering = input("Would you like to keep ordering? (Y)es or (N)o ")
-
+        
         # 5. Check the customer's input
-
+        
                 # Keep ordering
-
+        if keep_ordering =='y':       
                 # Exit the keep ordering question loop
-
+                break
                 # Complete the order
-
+        elif keep_ordering =='n':
+            place_order = False
                 # Since the customer decided to stop ordering, thank them for
                 # their order
-
+            print ("thank you for your order!")
                 # Exit the keep ordering question loop
-
+            break
 
                 # Tell the customer to try again
+        else:
+            print("invalid input. Please enter Y or N.")
 
 
 # Print out the customer's order
 print("This is what we are preparing for you.\n")
 
 # Uncomment the following line to check the structure of the order
-#print(order)
+#print(order_list)
 
-print("Item name                 | Price  | Quantity")
-print("--------------------------|--------|----------")
+#print("Item name              | Price  | Quantity")
+#print("-----------------------|--------|----------")
 
 # 6. Loop through the items in the customer's order
+# Sample order list
 
-    # 7. Store the dictionary items as variables
+# Calculate the maximum lengths for each column (for alignment)
+max_item_name_len = max(len(item['Item name']) for item in order_list)
+max_price_len = max(len(f"${item['Price']:.2f}") for item in order_list)
+max_quantity_len = max(len(str(item['Quantity'])) for item in order_list)
 
+# Adjust the header and separator based on the longest item name and other columns
+print(f"{'Item name':<{max_item_name_len}} | {'Price':<{max_price_len}} | {'Quantity':<{max_quantity_len}}")
+print("-" * (max_item_name_len + max_price_len + max_quantity_len + 6))  # Extra 6 for spacing and pipes
 
-    # 8. Calculate the number of spaces for formatted printing
+# Loop through the items in the customer's order
+for item in order_list:
+    # Store the dictionary items as variables
+    item_name = item['Item name']
+    item_price = item['Price']
+    item_quantity = item['Quantity']
 
-
-    # 9. Create space strings
-
-
-    # 10. Print the item name, price, and quantity
-
+    # Print the formatted output
+    print(f"{item_name:<{max_item_name_len}} | ${item_price:<{max_price_len}.2f} | {item_quantity:<{max_quantity_len}}")
 
 # 11. Calculate the cost of the order using list comprehension
 # Multiply the price by quantity for each item in the order list, then sum()
 # and print the prices.
+total_cost = sum(item["Price"] * item["Quantity"] for item in order_list)
+print(f"\nTotal cost: ${total_cost:.2f}")
